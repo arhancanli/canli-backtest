@@ -53,17 +53,33 @@ print(
 print(f"             measured PBO on pure noise = {result.pbo:.3f}   (0.5 is correct here)")
 
 daily = pd.Series(rng.normal(0.0006, 0.011, size=1_260))  # ~5 years of daily returns
+
+# sr_trials_variance is the variance of Sharpe ACROSS the trial family, in the same
+# PER-PERIOD units as the series. Getting its scale wrong makes the whole exercise
+# meaningless: at V=0.04 (a per-period Sharpe sd of 0.2, twenty times this series'
+# own per-period Sharpe) the deflated ratio collapses at N=2 and the trial count
+# stops mattering at all. A per-period sd of 0.02 across a parameter sweep is a
+# defensible scale, and it is what lets N be the thing under study.
+TRIAL_SD = 0.02
+TRIAL_VARIANCE = TRIAL_SD**2
+
 runs = []
 for _ in range(200):
     t0 = time.perf_counter()
-    report = dsr_from_returns(daily, n_trials=200, sr_trials_variance=0.04)
+    report = dsr_from_returns(daily, n_trials=200, sr_trials_variance=TRIAL_VARIANCE)
     runs.append(time.perf_counter() - t0)
 print(
     f"DSR          1,260 daily returns, n_trials=200 -> {statistics.median(runs) * 1e6:,.0f} us "
     f"per call (median of 200)"
 )
 print(
-    f"             annualised SR {report.sr_ann:+.3f}, expected max SR from 200 trials "
-    f"{report.expected_max_sr:.3f} -> DSR {report.dsr:.3f}"
+    f"             annualised SR {report.sr_ann:+.3f}, PSR against zero "
+    f"{report.psr:.4f} (that is the number without deflation)"
 )
+# The point of the instrument, shown rather than asserted: one unchanged return
+# series, and the only thing that moves is how many things you admit to trying.
+print(f"             same series, trial sd {TRIAL_SD}, deflated against N trials:")
+for n_trials in (2, 10, 50, 200, 1000):
+    row = dsr_from_returns(daily, n_trials=n_trials, sr_trials_variance=TRIAL_VARIANCE)
+    print(f"               N={n_trials:<5} SR*={row.expected_max_sr:.5f}  DSR={row.dsr:.4f}")
 print(f"machine      {platform.machine()} - python {platform.python_version()}")

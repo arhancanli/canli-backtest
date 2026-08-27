@@ -206,8 +206,8 @@ uv run python benchmarks/validation_throughput.py
 
 | operation | cost |
 |---|---|
-| PBO via CSCV — 2,000 observations × 100 configs, S=16, 5,000 sampled splits | **1.55 s** |
-| DSR — 1,260 daily returns, `n_trials=200` | **289 µs** per call |
+| PBO via CSCV, 2,000 observations × 100 configs, S=16, 5,000 sampled splits | **1.6 s** |
+| DSR, 1,260 daily returns | **~300 µs** per call |
 
 Apple silicon (arm64), Python 3.12.13, single process. `C(16, 8)` is 12,870 splits; the
 implementation samples 5,000 of them with a fixed seed rather than enumerating all — the number
@@ -224,10 +224,28 @@ A speed benchmark can be fast and wrong. So both cases assert behaviour:
 - The PBO case is built adversarially: 100 configs of **pure noise**, so the in-sample winner
   always won by luck. A correct CSCV must land near 0.5 — the measured value is **0.569**. If the
   implementation ever started finding signal in noise, that number would move before the timing did.
-- The DSR case is the argument in one line. A return series with an annualized Sharpe of
-  **+1.139** — the kind of number that gets published — has an expected-maximum Sharpe from 200
-  trials of **0.553**, and a Deflated Sharpe of **0.000**. Once you count what you tried, that
-  strategy is indistinguishable from luck.
+- The DSR case holds one return series fixed and moves only the trial count. Annualized Sharpe
+  **+1.139**, and a Probabilistic Sharpe against zero of **0.9828**: the kind of number that gets
+  published. Deflated against a trial family whose per-period Sharpes scatter with sd 0.02:
+
+  | trials N | expected max Sharpe | DSR |
+  |---:|---:|---:|
+  | 2 | 0.01040 | **0.9596** |
+  | 10 | 0.03149 | 0.8408 |
+  | 50 | 0.04553 | 0.6914 |
+  | 200 | 0.05531 | 0.5608 |
+  | 1000 | 0.06510 | 0.4230 |
+
+  Nothing about the strategy changed between those rows. Against the project's 0.95 deployment
+  gate, that Sharpe is admissible if you tried two things and inadmissible if you tried ten.
+
+  **A correction, since this README claimed otherwise on the day it was published.** The first
+  version used `sr_trials_variance=0.04`, and reported that the same Sharpe deflated to 0.000 at
+  200 trials. The arithmetic was right and the attribution was wrong: 0.04 is a per-period Sharpe
+  variance of sd 0.2, roughly twenty times this series' own per-period Sharpe, and at that scale
+  the ratio collapses at N=2 and the trial count stops mattering at all. It was the variance
+  argument doing the work, not the trial count, while the sentence credited the trial count. The
+  benchmark now uses a defensible scale and prints the sweep instead of one figure.
 
 ### What is verified
 
