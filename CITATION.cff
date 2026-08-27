@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use canli-backtest, please cite the software and its author."
+title: "canli-backtest: A backtester with fill-time causality and multiple-testing accounting"
+type: software
+authors:
+  - family-names: "Canli"
+    given-names: "Arhan"
+repository-code: "https://github.com/arhancanli/canli-backtest"
+url: "https://canlicapital.com"
+license: MIT
+keywords:
+  - backtesting
+  - look-ahead bias
+  - overfitting
+  - deflated Sharpe ratio
+  - probability of backtest overfitting
+  - walk-forward validation
+abstract: >-
+  canli-backtest is the simulation and validation layer of the ALPHAC research engine, published
+  standalone. Decisions are separated from fills so a signal computed at a bar can only transact
+  at a later executable price; execution realism covers borrow, financing, corporate actions and
+  venue state; and a union trial ledger counts every hypothesis ever tested so deflated-Sharpe
+  and probability-of-backtest-overfitting corrections use an honest denominator.
