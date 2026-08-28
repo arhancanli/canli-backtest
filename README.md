@@ -139,6 +139,33 @@ every point-in-time read.
 ## Quick start
 
 ```bash
+pip install canli-backtest
+```
+
+Two numbers from one series, which is the whole argument:
+
+```python
+import numpy as np, pandas as pd
+from alphaforge.validation.dsr import dsr_from_returns
+
+# 1,260 draws from a distribution with no edge in it. Five years of nothing.
+noise = pd.Series(np.random.default_rng(20260828).normal(0.0004, 0.01, 1260))
+report = dsr_from_returns(noise, n_trials=200, sr_trials_variance=0.04)
+
+report.sr_ann   # 0.361  -- an annualised Sharpe you would put in a deck
+report.psr      # 0.749  -- "75% odds it is real", if you tried this once
+report.dsr      # 2.0e-80 -- the same series, told you tried 200 things first
+```
+
+Nothing about the data changes between those three lines. The only new
+information in the last one is how many configurations were tried before this
+one was chosen, and it is the difference between a result and an artefact.
+`n_trials=1` is rejected rather than accepted quietly: a search of one is not a
+search, and the correction is undefined there.
+
+### Working on it, or checking it
+
+```bash
 git clone https://github.com/arhancanli/canli-backtest.git
 cd canli-backtest
 uv venv --python 3.12 && uv pip install -e . && uv pip install --group dev
