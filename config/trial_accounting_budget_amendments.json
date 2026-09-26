@@ -1,0 +1,99 @@
+{
+ "amendments": [
+  {
+   "decided_on": "2026-09-23",
+   "decision": {
+    "by": "Arhan Canli (owner)",
+    "context": "Chosen in the operator session of 2026-09-23 among: raise in steps, best ideas first; keep 400 and aim for fewer sleeves. The option read: publicly raise the cap in reviewed steps (400 -> 500 -> 700), charge the higher bar for luck honestly, and only test the ideas with the strongest outside evidence. Followed by 'ok go ahead' and 'ok continue'.",
+    "words": "Raise in steps, best ideas first (Recommended)"
+   },
+   "hypothesis_identity_ceiling": 500,
+   "id": "v8-step-1-2026-09-23",
+   "next_step_rule": {
+    "decided_at_review": 500,
+    "declared_before_any_identity_above_400": true,
+    "rule": "At the 500 review, recompute the Beta hit-rate posterior (Jeffreys prior, legacy 3 of 46, plus every governed test since) and price the 700 ceiling with the same script. Propose 700 only if the probability of reaching fourteen qualified sleeves by 700 is at least 0.50 at the posterior mean AND at least 0.05 at its 5th percentile; otherwise hold at 500 and publish the reading. The step needs a new owner-written amendment either way.",
+    "to": 700
+   },
+   "policy_path": "config/trial_accounting.json",
+   "policy_sha256": "sha256:f15af7c989aded5da6c5259a7f7e5587377ab33977b5cd3c5b2395a84ea45043",
+   "priced_by": {
+    "ceilings": {
+     "1000": {
+      "admissible_tests_remaining": 325,
+      "hurdle_at_3y_sample": 2.5895,
+      "hurdle_increase_vs_now": 0.0571,
+      "probability_at_least_ten_new_sleeves": {
+       "mean": 0.9995,
+       "p05": 0.2157,
+       "p95": 1.0
+      }
+     },
+     "400": {
+      "admissible_tests_remaining": 25,
+      "hurdle_at_3y_sample": 2.4684,
+      "hurdle_increase_vs_now": 0.0077,
+      "probability_at_least_ten_new_sleeves": {
+       "mean": 0.0,
+       "p05": 0.0,
+       "p95": 0.0012
+      }
+     },
+     "500": {
+      "admissible_tests_remaining": 75,
+      "hurdle_at_3y_sample": 2.4988,
+      "hurdle_increase_vs_now": 0.0201,
+      "probability_at_least_ten_new_sleeves": {
+       "mean": 0.0404,
+       "p05": 0.0,
+       "p95": 0.614
+      }
+     },
+     "700": {
+      "admissible_tests_remaining": 175,
+      "hurdle_at_3y_sample": 2.5434,
+      "hurdle_increase_vs_now": 0.0383,
+      "probability_at_least_ten_new_sleeves": {
+       "mean": 0.8085,
+       "p05": 0.0075,
+       "p95": 0.9999
+      }
+     }
+    },
+    "hit_rate_posterior": {
+     "governed_prospective": {
+      "admitted": 0,
+      "governed_identities": 3,
+      "tests": 2
+     },
+     "legacy": "3 survivors from 46 tested candidates",
+     "posterior": "Beta(3.5, 45.5), Jeffreys prior",
+     "rates": {
+      "mean": 0.07142857142857142,
+      "p05": 0.02291964619724467,
+      "p95": 0.1397510602615595
+     }
+    },
+    "script": "scripts/analyze_trial_budget_cost.py",
+    "script_sha256": "sha256:6e6b47b8f1fe1f1114661af7daf4feb4a21bbe3c4dfc15fb6ded9e5a66a8ea80",
+    "union_identities": 349
+   },
+   "queue_rule": "Identities above 400 go first to families ranked by external evidence and reachability (published atlas reachability screen and the ranking written for this step); no family already closed KILL, and none past the single-family tripwire of 40, is eligible without a new owner decision.",
+   "staged_hard_reviews": [
+    450,
+    500
+   ],
+   "unchanged": [
+    "every admission gate in config/sleeve_admission_contract.json",
+    "complete-union deflation: every new identity counts",
+    "the 360 and 400 staged reviews in the policy",
+    "trial_accounting.json's bytes"
+   ],
+   "why": "The owner's goal of at least 14 qualified sleeves needs about ten more. With 349 identities in the complete union and two identities per admissible test (PBO is defined only for batches of two or more), the 400 ceiling leaves 25 tests; at the posterior hit rate the chance of ten new sleeves in 25 tests is effectively zero. The deflation hurdle rises with the logarithm of the trial count, so each step costs little evidence (priced below); the hit rate's uncertainty is the real risk, which is why the ceiling rises in steps with a measured review between them."
+  }
+ ],
+ "author": "Arhan Canli",
+ "content_hash": "sha256:c5658b45fa51411bf7e2d8198391b8a8a02618274403a4110d9a71780c0457ed",
+ "purpose": "Owner decisions that raise the hypothesis-identity ceiling above config/trial_accounting.json's own budget without editing that policy, which is embedded byte-for-byte in the admission v7 promotion receipt and hash-bound by every sealed reservation. Read by alphaforge.validation.trial_budget; a reservation above the policy budget must bind this file's hash.",
+ "schema": "canli.alphac-trial-budget-amendments.v1"
+}

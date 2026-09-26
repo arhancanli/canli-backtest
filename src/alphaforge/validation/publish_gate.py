@@ -134,7 +134,9 @@ def check_curve(
 def _iter_curves(
     state: Mapping[str, Any],
 ) -> Iterable[tuple[str, Sequence[Mapping[str, Any]]]]:
-    for key in ("live_curve", "research_curve"):
+    # cost_charged_curve (2026-09-15): the broker curve less model charges. It is published, so
+    # it is gated; a curve the gate does not iterate is a curve the 400,207 could return on.
+    for key in ("live_curve", "research_curve", "cost_charged_curve"):
         c = state.get(key)
         if isinstance(c, list) and c:
             yield f"book.{key}", c
@@ -142,7 +144,7 @@ def _iter_curves(
         if not isinstance(algo, Mapping):
             continue
         nm = algo.get("name") or algo.get("key") or "?"
-        for key in ("live_curve", "research_curve"):
+        for key in ("live_curve", "research_curve", "cost_charged_curve"):
             c = algo.get(key)
             if isinstance(c, list) and c:
                 yield f"{nm}.{key}", c
