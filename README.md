@@ -279,9 +279,9 @@ A speed benchmark can be fast and wrong. So both cases assert behaviour:
 | check | result |
 |---|---|
 | tests | **279 passed** |
-| types | `mypy --strict`, **0 issues** across 41 source files |
+| types | `mypy --strict`, **0 issues** across 42 source files |
 | lint | `ruff`, **clean** |
-| parity with the engine | **116 files byte-identical** |
+| parity with the engine | **118 files byte-identical** |
 
 ---
 
